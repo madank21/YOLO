@@ -1,0 +1,64 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Node.js and Next.js
+node_modules/
+.next/
+out/
+tsconfig.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python environments, caches, and test output
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# ML training and inference artifacts
+runs/
+wandb/
+*.pt
+*.onnx
+*.engine
+*.safetensors
+
+# Local datasets and archives
+*.zip
+dataset/raw_zips/
+dataset/merged/images/
+dataset/merged/labels/
+dataset/extracted/*/train/images/
+dataset/extracted/*/train/labels/
+dataset/extracted/*/valid/images/
+dataset/extracted/*/valid/labels/
+dataset/extracted/*/test/images/
+dataset/extracted/*/test/labels/
+
+# Local databases and runtime files
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
