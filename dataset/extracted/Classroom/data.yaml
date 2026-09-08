@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 4
+names: ['cadeira', 'celular', 'notebook', 'pessoa']
+
+roboflow:
+  workspace: madan-here
+  project: classroom-nct1w-aivbf
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/madan-here/classroom-nct1w-aivbf/dataset/1

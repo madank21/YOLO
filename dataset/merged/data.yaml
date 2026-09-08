@@ -1,0 +1,18 @@
+names:
+- pen
+- chair
+- laptop
+- door
+- ac
+- fan
+- whiteboard
+- mobile
+- notebook
+- marker
+- keyboard
+- person
+nc: 12
+path: C:\Users\mehun\OneDrive\Desktop\Project\YOLO\dataset\merged
+test: images/val
+train: images/train
+val: images/val

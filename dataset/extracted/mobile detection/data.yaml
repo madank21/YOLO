@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 7
+names: ['haircap', 'mobile-phone', 'person', 'with face mask', 'without face mask', 'without gloves', 'without haircap']
+
+roboflow:
+  workspace: madan-here
+  project: mobile-detection-aepqi-3vmpf
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/madan-here/mobile-detection-aepqi-3vmpf/dataset/1
