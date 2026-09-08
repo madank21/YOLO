@@ -26,6 +26,9 @@ htmlcov/
 .coverage
 .coverage.*
 coverage.xml
+flow.md
+merge_datasets.py
+
 
 # ML training and inference artifacts
 runs/
