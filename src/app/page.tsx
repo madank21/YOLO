@@ -10,7 +10,6 @@ import { TrainingHub } from "@/components/TrainingHub";
 import { DeviceManager } from "@/components/DeviceManager";
 import { SystemSettings } from "@/components/SystemSettings";
 import { PairingModal } from "@/components/PairingModal";
-import { AdminAuthGate } from "@/components/AdminAuthGate";
 
 export default function VisionForgeDashboard() {
   const [activeTab, setActiveTab] = useState<NavTab>("scanner");
@@ -51,7 +50,6 @@ export default function VisionForgeDashboard() {
   };
 
   return (
-    <AdminAuthGate>
     <div className="flex min-h-screen flex-col bg-slate-950 text-slate-100 selection:bg-cyan-500 selection:text-slate-950 font-sans">
       {/* Top Navigation & Status Bar */}
       <Navbar
@@ -105,6 +103,5 @@ export default function VisionForgeDashboard() {
         </div>
       </footer>
     </div>
-    </AdminAuthGate>
   );
 }
