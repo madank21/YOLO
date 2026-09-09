@@ -55,6 +55,9 @@ dataset/extracted/*/test/labels/
 *.sqlite
 *.sqlite3
 *.log
+storage/data.json
+storage/models/
+inference_service/main_backup.py
 
 # OS and editor files
 .DS_Store
