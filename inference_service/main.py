@@ -1,4 +1,4 @@
-﻿from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
@@ -12,7 +12,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ultralytics import YOLO
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 import io
 import time
 
@@ -150,6 +150,7 @@ async def infer(
         # Read image
         image_data = await frame.read()
         image = Image.open(io.BytesIO(image_data))
+        image = ImageOps.exif_transpose(image)
         image_array = np.array(image)
         
         # Get image info
@@ -161,8 +162,8 @@ async def infer(
             "content_type": frame.content_type
         }
         
-        # Run inference
-        results = model.predict(image_array, conf=confidence_threshold, verbose=False)
+        # Run inference with optimized resolution (imgsz=416) for low-latency streaming
+        results = model.predict(image_array, imgsz=416, conf=confidence_threshold, verbose=False)
         
         # Parse results
         detections = []
