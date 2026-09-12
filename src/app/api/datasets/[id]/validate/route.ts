@@ -1,0 +1,5 @@
+import { successResponse, errorResponse } from "@/lib/api-response";
+import { getJsonStore } from "@/lib/json-store";
+import { validateDataset } from "@/lib/validator";
+
+export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) { const { id } = await params; const dataset = (await getJsonStore()).datasets.find((item) => item.id === id); if (!dataset) return errorResponse("DATASET_NOT_FOUND", "Dataset not found", 404); const report = validateDataset({ datasetId: id, classes: dataset.classes.map((item) => ({ id: item.id, name: item.name, classIndex: item.classIndex })), images: dataset.images.map((image) => ({ id: image.id, filePath: image.filePath, width: image.width, height: image.height, checksumSha256: image.checksumSha256, split: image.split, hasData: Boolean(image.imageData && image.imageData.length > 10) })), annotations: dataset.images.flatMap((image) => image.annotations.map((annotation) => ({ ...annotation, imageId: image.id }))) }); return successResponse({ report }); }
