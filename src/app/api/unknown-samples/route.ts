@@ -1,0 +1,15 @@
+import { successResponse, errorResponse } from "@/lib/api-response";
+import { checksum, getJsonStore, newId, nowIso, updateJsonStore } from "@/lib/json-store";
+import { requireAdmin } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
+
+export async function GET() { return successResponse({ samples: (await getJsonStore()).unknownSamples }); }
+
+export async function POST(request: Request) {
+  const authError = requireAdmin(request); if (authError) return authError; const body = await request.json(); const action = body.action || "capture";
+  if (action === "capture") { if (!body.image_data) return errorResponse("UPLOAD_INVALID_TYPE", "image_data is required", 400); const sample = { id: newId(), imageData: body.image_data, confidence: body.confidence ?? 0.35, detectedClass: body.detected_class || "unknown", width: body.width || 640, height: body.height || 480, capturedAt: nowIso(), status: "captured", targetDatasetId: null, assignedLabel: null }; await updateJsonStore((store) => { store.unknownSamples.push(sample); }); return successResponse({ sample }, 201); }
+  if (action === "discard") { await updateJsonStore((store) => { const sample = store.unknownSamples.find((item) => item.id === body.sample_id); if (sample) sample.status = "discarded"; }); return successResponse({ discarded: true, sample_id: body.sample_id }); }
+  if (action === "assign") { if (!body.sample_id || !body.dataset_id || !body.label_name) return errorResponse("ANNOTATION_INVALID", "sample_id, dataset_id, and label_name are required", 400); const result = await updateJsonStore((store) => { const sample = store.unknownSamples.find((item) => item.id === body.sample_id); const dataset = store.datasets.find((item) => item.id === body.dataset_id); if (!sample || !dataset) return null; const label = body.label_name.trim().toLowerCase().replace(/\s+/g, "_"); const sampleId = String(sample.id); let cls = dataset.classes.find((item) => item.name === label); if (!cls) { cls = { id: newId(), name: label, classIndex: dataset.classes.length, colorHex: body.color_hex || "#10B981", source: "custom", cocoAlias: null }; dataset.classes.push(cls); } const image = { id: newId(), filePath: `datasets/${dataset.id}/images/unknown_${sampleId.slice(0, 8)}.jpg`, imageData: String(sample.imageData), width: Number(sample.width), height: Number(sample.height), checksumSha256: checksum(String(sample.imageData)), source: "unknown_sample", capturedAt: nowIso(), split: "train", annotations: [{ id: newId(), classId: cls.id, xCenter: 0.5, yCenter: 0.5, width: 0.9, height: 0.9, createdBy: "human", createdAt: nowIso() }] }; dataset.images.push(image); sample.status = "assigned"; sample.targetDatasetId = dataset.id; sample.assignedLabel = label; return { imageId: image.id, classId: cls.id, label }; }); if (!result) return errorResponse("DATASET_NOT_FOUND", "Sample or dataset not found", 404); return successResponse({ assigned: true, ...result }); }
+  return errorResponse("INTERNAL_ERROR", "Unknown action", 400);
+}
