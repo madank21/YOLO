@@ -1,0 +1,5 @@
+import { errorResponse } from "@/lib/api-response";
+import { getJsonStore } from "@/lib/json-store";
+import { buildTrainingPackageZip } from "@/lib/yolo-export";
+
+export async function GET(_request: Request, { params }: { params: Promise<{ datasetId: string }> }) { const { datasetId } = await params; const dataset = (await getJsonStore()).datasets.find((item) => item.id === datasetId); if (!dataset) return errorResponse("DATASET_NOT_FOUND", "Dataset not found", 404); const zip = await buildTrainingPackageZip({ datasetName: dataset.name, version: dataset.version, classes: dataset.classes.map((item) => ({ id: item.id, name: item.name, classIndex: item.classIndex })), images: dataset.images.map(({ annotations: _annotations, ...image }) => image), annotations: dataset.images.flatMap((image) => image.annotations.map((annotation) => ({ ...annotation, imageId: image.id }))) }); return new Response(await zip.arrayBuffer(), { headers: { "Content-Type": "application/zip", "Content-Disposition": `attachment; filename="training_package_${dataset.name}_v${dataset.version}.zip"` } }); }
